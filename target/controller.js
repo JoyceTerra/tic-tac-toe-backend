@@ -30,21 +30,24 @@ let GameContoller = class GameContoller {
         newGame.board = lib_1.defaultBoard;
         return newGame.save();
     }
-    async updateGame(id, board) {
+    async updateGame(id, name, color, board, update) {
         const game = await entity_1.default.findOne(id);
         if (!game)
-            throw new routing_controllers_1.NotFoundError('The game you requested does not exist');
-        const board1 = game.board;
-        const board2 = board;
-        if (board1) {
-            if (lib_1.moves(board1, board2) === 1) {
-                game.board = board2;
+            throw new routing_controllers_1.NotFoundError('The game you requested doesn\'t exist :(');
+        if (board) {
+            if (lib_1.moves(game.board, board) > 1) {
+                throw new routing_controllers_1.BadRequestError('You can only make one move per time ;)');
             }
             else {
-                throw new routing_controllers_1.BadRequestError('You can only make one move per time!');
+                game.board = board;
             }
         }
-        return game.save();
+        if (color) {
+            if (!lib_1.colors.includes(color)) {
+                throw new routing_controllers_1.BadRequestError('We don\'t have this color. You can choose magenta, green, blue, yellow or red :P');
+            }
+        }
+        return entity_1.default.merge(game, update).save();
     }
 };
 __decorate([
@@ -69,12 +72,15 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], GameContoller.prototype, "createGame", null);
 __decorate([
-    routing_controllers_1.Patch('/game/:id'),
+    routing_controllers_1.Put('/game/:id'),
     routing_controllers_1.HttpCode(200),
     __param(0, routing_controllers_1.Param('id')),
-    __param(1, routing_controllers_1.BodyParam('board')),
+    __param(1, routing_controllers_1.BodyParam('name')),
+    __param(2, routing_controllers_1.BodyParam('color')),
+    __param(3, routing_controllers_1.BodyParam('board')),
+    __param(4, routing_controllers_1.Body()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, String]),
+    __metadata("design:paramtypes", [Number, String, String, Object, Object]),
     __metadata("design:returntype", Promise)
 ], GameContoller.prototype, "updateGame", null);
 GameContoller = __decorate([

@@ -12,6 +12,7 @@ exports.moves = (board1, board2) => board1
 exports.colors = [
     'red',
     'blue',
+    'green',
     'magenta',
     'yellow'
 ];

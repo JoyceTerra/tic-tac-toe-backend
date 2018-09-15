@@ -1,12 +1,10 @@
-import { JsonController, Get, Param, Post, HttpCode, BodyParam, NotFoundError, Patch, BadRequestError } from 'routing-controllers'
+import { JsonController, Get, Param, Post, HttpCode, BodyParam, NotFoundError, Put, BadRequestError, Body } from 'routing-controllers'
 import Game from './entity'
-import { getRandomColor, defaultBoard, moves } from "./lib"
-
+import { getRandomColor, defaultBoard, moves, colors } from "./lib"
 
 @JsonController()
 export default class GameContoller {
 
-   
     @Get('/games')
     async getAllGames(){
         const games = await Game.find()
@@ -41,53 +39,36 @@ export default class GameContoller {
       return newGame.save() 
     }
 
-    @Patch('/game/:id')
+    @Put('/game/:id')
     @HttpCode(200)
     async updateGame(
-        @Param('id')id: number,
-        @BodyParam('board') board: string
+        @Param('id') id: number,
+        @BodyParam('name') name: string,
+        @BodyParam('color') color: string,
+        @BodyParam('board') board: object,
+        @Body() update: Partial<Game>
 
     ) {
         const game = await Game.findOne(id)
-        if(!game) throw new NotFoundError('The game you requested does not exist')
-        
-        const board1 = game.board //table name
-        const board2 = board //new value of board
 
-        if(board1){
-           if (moves(board1, board2) === 1){ //if there is one move
-                game.board = board2 //board is new board
+        if(!game) throw new NotFoundError('The game you requested doesn\'t exist :(')
+
+        if(board){
+            if (moves(game.board, board) > 1){ //if there is more than one move:
+                throw new BadRequestError('You can only make one move per time ;)')
             }else{
-                throw new BadRequestError('You can only make one move per time!')
+                game.board = board //board is new board
             }
         }
             
-        return game.save()
-    }
+        if(color){
+            if(!colors.includes(color)){
+                throw new BadRequestError('We don\'t have this color. You can choose magenta, green, blue, yellow or red :P')
+            }
+        }
 
-    //        if(moves) throw new BadRequestError('You can only make one move per time!')
-
-    
-
-
-
-
-    // @Patch('/game/:id')
-    // async updateGame(
-    //     @Param('id') id: number,
-
-    // )
-
-    // @Put('/game/:id')
-    // async updateGame(
-    //     @Param('id')id: number,
-    //     @Body() update: Partial<User>
-    // ) {
-    //     const user = await User.findOne(id)
-    //     if(!user) throw new NotFoundError('Cannot find user')
-    //     return User.merge(user, update).save()
-    // }
-    
+        return Game.merge(game, update).save()
+    }    
 }
 
 //PUT = replace the ENTIRE RESOURCE with the new representation provided

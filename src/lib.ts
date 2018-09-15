@@ -13,6 +13,7 @@ export const moves = (board1, board2) =>
 export const colors = [
     'red', 
     'blue',
+    'green',
     'magenta',
     'yellow'
 ]
