@@ -6,7 +6,7 @@ import setupDb from './db'
 
 const app = createKoaServer({
    controllers: [
-       GameController
+    GameController
     ]
 })
 

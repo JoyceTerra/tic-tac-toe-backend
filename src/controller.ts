@@ -3,7 +3,7 @@ import Game from './entity'
 import { getRandomColor, defaultBoard, moves, colors } from "./lib"
 
 @JsonController()
-export default class GameContoller {
+export default class GameController {
 
     @Get('/games')
     async getAllGames(){
