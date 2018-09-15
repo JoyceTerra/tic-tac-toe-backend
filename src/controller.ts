@@ -1,4 +1,4 @@
-import { JsonController, Get, Param, Post, HttpCode, BodyParam } from 'routing-controllers'
+import { JsonController, Get, Param, Post, HttpCode, BodyParam, Put, BadRequestError, Body } from 'routing-controllers'
 import Game from './entity'
 import { getRandomColor, defaultBoard } from "./lib"
 
@@ -21,7 +21,7 @@ export default class GameContoller {
     //     return Game.findOne(name)
     // }
 
-    @Get('/game/:id')
+    @Get('/game/:id') 
     getGame(
         @Param('id') id: number
     ) {
@@ -31,17 +31,38 @@ export default class GameContoller {
     @Post('/games')
     @HttpCode(201)
     async createGame(
-      @BodyParam('name') name: string
+      @BodyParam('name') name: string //to make a new whole game, the only thing the user gives is the name
     ) {
-        const newGame = new Game()
-        newGame.name = name
-        newGame.color = getRandomColor()
-        newGame.board = defaultBoard
+        const newGame = new Game() //creates a new game
+        newGame.name = name //name goes in the name field
+        newGame.color = getRandomColor() //the new game receives a random color
+        newGame.board = defaultBoard //also receives the default board(located in lib)
        
-      return newGame.save()
+      return newGame.save() 
     }
-       // @Put('/users/:id')
-    // async updateUser(
+
+    @Put('/game/:id')
+    async updateGame(
+        @Param('id')id: number,
+        @Body() update: Partial<Game>
+    ) {
+        const game = await Game.findOne(id)
+        if(!game) throw new BadRequestError('You can only make one move per time!')
+        return Game.merge(game, update).save()
+    }
+    
+
+
+
+
+    // @Patch('/game/:id')
+    // async updateGame(
+    //     @Param('id') id: number,
+
+    // )
+
+    // @Put('/game/:id')
+    // async updateGame(
     //     @Param('id')id: number,
     //     @Body() update: Partial<User>
     // ) {
@@ -51,3 +72,10 @@ export default class GameContoller {
     // }
     
 }
+
+//PUT = replace the ENTIRE RESOURCE with the new representation provided
+//and
+// PATCH = replace parts of the source resource with the values provided 
+// AND|OR other parts of the resource are updated that you havent provided (timestamps) 
+// AND|OR updating the resource effects other resources (relationships)
+

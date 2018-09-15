@@ -30,6 +30,12 @@ let GameContoller = class GameContoller {
         newGame.board = lib_1.defaultBoard;
         return newGame.save();
     }
+    async updateGame(id, update) {
+        const game = await entity_1.default.findOne(id);
+        if (!game)
+            throw new routing_controllers_1.BadRequestError('You can only make one move per time!');
+        return entity_1.default.merge(game, update).save();
+    }
 };
 __decorate([
     routing_controllers_1.Get('/games'),
@@ -52,6 +58,14 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], GameContoller.prototype, "createGame", null);
+__decorate([
+    routing_controllers_1.Put('/game/:id'),
+    __param(0, routing_controllers_1.Param('id')),
+    __param(1, routing_controllers_1.Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:returntype", Promise)
+], GameContoller.prototype, "updateGame", null);
 GameContoller = __decorate([
     routing_controllers_1.JsonController()
 ], GameContoller);
