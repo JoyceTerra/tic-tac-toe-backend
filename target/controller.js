@@ -30,11 +30,21 @@ let GameContoller = class GameContoller {
         newGame.board = lib_1.defaultBoard;
         return newGame.save();
     }
-    async updateGame(id, update) {
+    async updateGame(id, board) {
         const game = await entity_1.default.findOne(id);
         if (!game)
-            throw new routing_controllers_1.BadRequestError('You can only make one move per time!');
-        return entity_1.default.merge(game, update).save();
+            throw new routing_controllers_1.NotFoundError('The game you requested does not exist');
+        const board1 = game.board;
+        const board2 = board;
+        if (board1) {
+            if (lib_1.moves(board1, board2) === 1) {
+                game.board = board2;
+            }
+            else {
+                throw new routing_controllers_1.BadRequestError('You can only make one move per time!');
+            }
+        }
+        return game.save();
     }
 };
 __decorate([
@@ -60,10 +70,11 @@ __decorate([
 ], GameContoller.prototype, "createGame", null);
 __decorate([
     routing_controllers_1.Patch('/game/:id'),
+    routing_controllers_1.HttpCode(200),
     __param(0, routing_controllers_1.Param('id')),
-    __param(1, routing_controllers_1.Body()),
+    __param(1, routing_controllers_1.BodyParam('board')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:paramtypes", [Number, String]),
     __metadata("design:returntype", Promise)
 ], GameContoller.prototype, "updateGame", null);
 GameContoller = __decorate([

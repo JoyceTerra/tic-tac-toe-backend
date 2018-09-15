@@ -16,7 +16,7 @@ export default class Game extends BaseEntity {
   @Column('text', {nullable:true})
   color: string
 
-@IsJSON()
-@Column('json', {nullable:true})
-board: { }
+  @IsJSON()
+  @Column('json', {nullable:true})
+   board: { }
 }

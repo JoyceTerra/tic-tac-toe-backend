@@ -1,6 +1,6 @@
-import { JsonController, Get, Param, Post, HttpCode, BodyParam, Put, BadRequestError, Body, Patch } from 'routing-controllers'
+import { JsonController, Get, Param, Post, HttpCode, BodyParam, NotFoundError, Patch, BadRequestError } from 'routing-controllers'
 import Game from './entity'
-import { getRandomColor, defaultBoard } from "./lib"
+import { getRandomColor, defaultBoard, moves } from "./lib"
 
 
 @JsonController()
@@ -42,14 +42,31 @@ export default class GameContoller {
     }
 
     @Patch('/game/:id')
+    @HttpCode(200)
     async updateGame(
         @Param('id')id: number,
-        @Body() update: Partial<Game>
+        @BodyParam('board') board: string
+
     ) {
         const game = await Game.findOne(id)
-        if(!game) throw new BadRequestError('You can only make one move per time!')
-        return Game.merge(game, update).save()
+        if(!game) throw new NotFoundError('The game you requested does not exist')
+        
+        const board1 = game.board //table name
+        const board2 = board //new value of board
+
+        if(board1){
+           if (moves(board1, board2) === 1){ //if there is one move
+                game.board = board2 //board is new board
+            }else{
+                throw new BadRequestError('You can only make one move per time!')
+            }
+        }
+            
+        return game.save()
     }
+
+    //        if(moves) throw new BadRequestError('You can only make one move per time!')
+
     
 
 
