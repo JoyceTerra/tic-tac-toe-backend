@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm'
 import { BaseEntity } from 'typeorm/repository/BaseEntity'
-import { IsString, Length, IsJSON } from 'class-validator';
+import { IsString, IsJSON } from 'class-validator';
 
 @Entity()
 export default class Game extends BaseEntity {
@@ -9,7 +9,6 @@ export default class Game extends BaseEntity {
   id?: number
 
   @IsString()
-  @Length(5, 25)
   @Column('text', {nullable:false})
   name: string
 

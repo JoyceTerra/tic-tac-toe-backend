@@ -20,7 +20,6 @@ __decorate([
 ], Game.prototype, "id", void 0);
 __decorate([
     class_validator_1.IsString(),
-    class_validator_1.Length(5, 25),
     typeorm_1.Column('text', { nullable: false }),
     __metadata("design:type", String)
 ], Game.prototype, "name", void 0);
