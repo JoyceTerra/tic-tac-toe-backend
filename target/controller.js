@@ -59,7 +59,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], GameContoller.prototype, "createGame", null);
 __decorate([
-    routing_controllers_1.Put('/game/:id'),
+    routing_controllers_1.Patch('/game/:id'),
     __param(0, routing_controllers_1.Param('id')),
     __param(1, routing_controllers_1.Body()),
     __metadata("design:type", Function),

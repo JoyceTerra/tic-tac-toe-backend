@@ -1,4 +1,4 @@
-import { JsonController, Get, Param, Post, HttpCode, BodyParam, Put, BadRequestError, Body } from 'routing-controllers'
+import { JsonController, Get, Param, Post, HttpCode, BodyParam, Put, BadRequestError, Body, Patch } from 'routing-controllers'
 import Game from './entity'
 import { getRandomColor, defaultBoard } from "./lib"
 
@@ -41,7 +41,7 @@ export default class GameContoller {
       return newGame.save() 
     }
 
-    @Put('/game/:id')
+    @Patch('/game/:id')
     async updateGame(
         @Param('id')id: number,
         @Body() update: Partial<Game>
