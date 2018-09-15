@@ -43,7 +43,7 @@ export default class GameController {
     @HttpCode(200)
     async updateGame(
         @Param('id') id: number,
-        @BodyParam('name') name: string,
+        // @BodyParam('name') name: string,
         @BodyParam('color') color: string,
         @BodyParam('board') board: object,
         @Body() update: Partial<Game>
@@ -51,22 +51,17 @@ export default class GameController {
     ) {
         const game = await Game.findOne(id)
 
-        if(!game) throw new NotFoundError('The game you requested doesn\'t exist :(')
+        if(!game) throw new NotFoundError('The game you requested doesn\'t exist :( ')
 
-        if(board){
-            if (moves(game.board, board) > 1){ //if there is more than one move:
-                throw new BadRequestError('You can only make one move per time ;)')
-            }else{
-                game.board = board //board is new board
-            }
+        if (board && moves(game.board, board) > 1){ //if there is more than one move:
+             throw new BadRequestError('You can only make one move per time ;) ')
+        }else{
+             game.board = board //board is new board
         }
-            
-        if(color){
-            if(!colors.includes(color)){
-                throw new BadRequestError('We don\'t have this color. You can choose magenta, green, blue, yellow or red :P')
-            }
+        
+        if(color && !colors.includes(color)){
+            throw new BadRequestError('We don\'t have this color. You can choose magenta, green, blue, yellow or red :P ')
         }
-
         return Game.merge(game, update).save()
     }    
 }

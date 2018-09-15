@@ -30,22 +30,18 @@ let GameController = class GameController {
         newGame.board = lib_1.defaultBoard;
         return newGame.save();
     }
-    async updateGame(id, name, color, board, update) {
+    async updateGame(id, color, board, update) {
         const game = await entity_1.default.findOne(id);
         if (!game)
-            throw new routing_controllers_1.NotFoundError('The game you requested doesn\'t exist :(');
-        if (board) {
-            if (lib_1.moves(game.board, board) > 1) {
-                throw new routing_controllers_1.BadRequestError('You can only make one move per time ;)');
-            }
-            else {
-                game.board = board;
-            }
+            throw new routing_controllers_1.NotFoundError('The game you requested doesn\'t exist :( ');
+        if (board && lib_1.moves(game.board, board) > 1) {
+            throw new routing_controllers_1.BadRequestError('You can only make one move per time ;) ');
         }
-        if (color) {
-            if (!lib_1.colors.includes(color)) {
-                throw new routing_controllers_1.BadRequestError('We don\'t have this color. You can choose magenta, green, blue, yellow or red :P');
-            }
+        else {
+            game.board = board;
+        }
+        if (color && !lib_1.colors.includes(color)) {
+            throw new routing_controllers_1.BadRequestError('We don\'t have this color. You can choose magenta, green, blue, yellow or red :P ');
         }
         return entity_1.default.merge(game, update).save();
     }
@@ -75,12 +71,11 @@ __decorate([
     routing_controllers_1.Put('/game/:id'),
     routing_controllers_1.HttpCode(200),
     __param(0, routing_controllers_1.Param('id')),
-    __param(1, routing_controllers_1.BodyParam('name')),
-    __param(2, routing_controllers_1.BodyParam('color')),
-    __param(3, routing_controllers_1.BodyParam('board')),
-    __param(4, routing_controllers_1.Body()),
+    __param(1, routing_controllers_1.BodyParam('color')),
+    __param(2, routing_controllers_1.BodyParam('board')),
+    __param(3, routing_controllers_1.Body()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, String, String, Object, Object]),
+    __metadata("design:paramtypes", [Number, String, Object, Object]),
     __metadata("design:returntype", Promise)
 ], GameController.prototype, "updateGame", null);
 GameController = __decorate([
